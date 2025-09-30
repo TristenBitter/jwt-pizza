@@ -6,6 +6,8 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
+    "test": "jest",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
