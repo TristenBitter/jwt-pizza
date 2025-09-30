@@ -3,6 +3,7 @@ import app from './service.js';
 
 test('get cities', async () => {
   const getCitiesRes = await request(app).get('/cities');
+
   expect(getCitiesRes.status).toBe(200);
   expect(getCitiesRes.headers['content-type']).toMatch('application/json; charset=utf-8');
   expect(getCitiesRes.body).toMatchObject([{ name: 'Provo', population: 116618 }]);
@@ -21,7 +22,7 @@ async function login() {
   return loginRes.body.authorization;
 }
 
-test('add cities', async () => {
+test('add cities with auth', async () => {
   const authToken = await login();
 
   const city = { name: 'Orem', population: 89932 };
@@ -38,8 +39,10 @@ test('add cities', async () => {
   ]);
 });
 
-test('add cities no auth', async () => {
+test('add cities without auth fails', async () => {
   const city = { name: 'Springville', population: 35000 };
   const addCitiesRes = await request(app).post('/cities').send(city);
+
   expect(addCitiesRes.status).toBe(401);
+  expect(addCitiesRes.body).toMatchObject({ message: 'Unauthorized' });
 });
