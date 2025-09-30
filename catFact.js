@@ -3,7 +3,6 @@ class CatFact {
     this.facts = [];
   }
 
-  // Add a step to the pipeline. Each step is called in the order it was added.
   async add() {
     try {
       const response = await fetch('https://meowfacts.herokuapp.com/');
@@ -16,12 +15,10 @@ class CatFact {
     }
   }
 
-  // Get the history of cat facts
   history() {
     return this.facts;
   }
 
-  // Call the given callback with a new cat fact every `time` milliseconds
   call(time, callback) {
     setInterval(async () => {
       const fact = await this.add();
@@ -30,4 +27,4 @@ class CatFact {
   }
 }
 
-module.exports = CatFact;
+export default CatFact;
