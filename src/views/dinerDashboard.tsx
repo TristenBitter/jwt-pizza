@@ -8,7 +8,7 @@ interface Props {
   user: User | null;
 }
 
-export default function DinerDashboard(props: Props) {
+export default function bDinerDashboard(props: Props) {
   const user = props.user || ({} as User);
   const [orders, setOrders] = React.useState<Order[]>([]);
 
