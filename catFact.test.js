@@ -1,4 +1,4 @@
-const CatFact = require('./catFact');
+import CatFact from './catFact.js';
 
 // Mock global fetch
 global.fetch = jest.fn();
@@ -8,7 +8,7 @@ describe('CatFact', () => {
 
   beforeEach(() => {
     catFact = new CatFact();
-    jest.useFakeTimers(); // for testing setInterval
+    jest.useFakeTimers();
     jest.clearAllMocks();
   });
 
@@ -53,10 +53,7 @@ describe('CatFact', () => {
     const callback = jest.fn();
     catFact.call(1000, callback);
 
-    // Fast-forward timers
     await jest.advanceTimersByTimeAsync(3000);
-
-    // Wait for promises to resolve
     await Promise.resolve();
 
     expect(callback).toHaveBeenCalledTimes(3);
