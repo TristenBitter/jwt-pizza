@@ -31,13 +31,12 @@ export default [
 
   // Jest test support
   {
-    files: ["**/*.test.js", "**/*.test.ts", "**/*.test.jsx", "**/*.test.tsx"],
-    plugins: { jest: jestPlugin },
-    languageOptions: {
-      globals: {
-        ...globals.jest,
-      },
+  files: ["**/*.test.js", "**/*.test.ts", "**/*.test.jsx", "**/*.test.tsx"],
+  languageOptions: {
+    globals: {
+      ...globals.jest,
     },
+  },
     rules: {
       "jest/expect-expect": "warn",
     },
