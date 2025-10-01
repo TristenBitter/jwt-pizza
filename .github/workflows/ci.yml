@@ -41,6 +41,28 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Write config file
+        run: |
+          cat > src/config.js << 'EOF'
+          module.exports = {
+            jwtSecret: '${{ secrets.JWT_SECRET }}',
+            db: {
+              connection: {
+                host: '127.0.0.1',
+                user: 'root',
+                password: 'tempdbpassword',
+                database: 'pizza',
+                connectTimeout: 60000,
+              },
+              listPerPage: 10,
+            },
+            factory: {
+              url: 'https://pizza-factory.cs329.click',
+              apiKey: '${{ secrets.FACTORY_API_KEY }}',
+            },
+          };
+          EOF
+
       - name: Tests
         run: npm test
 
