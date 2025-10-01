@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   collectCoverage: true,
   coverageDirectory: "coverage",
   coverageReporters: ["json", "lcov", "text", "clover"],
@@ -6,5 +6,8 @@ module.exports = {
     global: {
       lines: 80
     }
-  }
+  },
+  testEnvironment: "node",
+  transform: {}
 };
+
