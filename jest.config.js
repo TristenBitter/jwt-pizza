@@ -1,7 +1,7 @@
 export default {
   collectCoverage: true,
   coverageDirectory: "coverage",
-  coverageReporters: ["json", "lcov", "text", "clover"],
+  coverageReporters: ["json-summary", "lcov", "text", "clover"],
   coverageThreshold: {
     global: {
       lines: 80
@@ -10,4 +10,3 @@ export default {
   testEnvironment: "node",
   transform: {}
 };
-
