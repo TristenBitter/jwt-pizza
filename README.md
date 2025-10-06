@@ -1,4 +1,4 @@
-# 🍕 JWT Pizza
+# 🍕 JWT PIZZA
 
 [![CI Pipeline](https://github.com/tristenbitter/jwt-pizza/actions/workflows/ci.yml/badge.svg)](https://github.com/tristenbitter/jwt-pizza/actions/workflows/ci.yml)
 
