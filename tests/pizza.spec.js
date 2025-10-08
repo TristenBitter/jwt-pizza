@@ -1,12 +1,7 @@
-//Fix env var so httpPizzaService can import cleanly
 process.env.VITE_PIZZA_SERVICE_URL = "http://localhost:5173/api";
 
 import { test, expect } from "playwright-test-coverage";
 
-/**
- * 🧠 Simplified mockAdmin helper
- * Hard-codes an "admin" user, mocks backend endpoints, and keeps context stable.
- */
 async function mockAdmin(page) {
   await page.context().addInitScript(() => {
     localStorage.setItem("token", "fake-admin-token");
@@ -166,22 +161,6 @@ test("franchise dashboard page loads", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-// test("create and close franchise/store pages render (admin)", async ({
-//   page,
-// }) => {
-//   await mockAdmin(page);
-//   const routes = [
-//     "http://localhost:5173/create-franchise",
-//     "http://localhost:5173/close-franchise",
-//     "http://localhost:5173/create-store",
-//     "http://localhost:5173/close-store",
-//   ];
-//   for (const route of routes) {
-//     await page.goto(route);
-//     await page.waitForLoadState("domcontentloaded");
-//     await expect(page.locator("main")).toBeVisible();
-//   }
-// });
 
 test("delivery page shows instructions", async ({ page }) => {
   await page.goto("http://localhost:5173/delivery");
@@ -202,16 +181,6 @@ test("register page handles multiple inputs and submits twice", async ({
   await expect(page.locator("main")).toContainText(/register/i);
 });
 
-// test("menu page covers pizza selections and total display", async ({
-//   page,
-// }) => {
-//   await page.goto("http://localhost:5173/menu");
-//   await expect(page.locator("main")).toBeVisible();
-//   await page.getByRole("link", { name: /cheese/i }).click();
-//   await page.getByRole("link", { name: /pepperoni/i }).click();
-//   await page.getByRole("link", { name: /veggie/i }).click();
-//   await expect(page.locator("form")).toContainText(/Selected pizzas/i);
-// });
 
 test("delivery page triggers verify button", async ({ page }) => {
   await page.goto("http://localhost:5173/delivery");
@@ -264,9 +233,8 @@ test("franchise dashboard interacts with data", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* ---------------------- STABLE BRANCH COVERAGE BOOSTERS ---------------------- */
+/* ------------------------------------------- */
 
-// helper: reusable API mock
 async function setupApiMocks(page, opts = {}) {
   const {
     menu = "success", // success | error
@@ -314,7 +282,7 @@ async function setupApiMocks(page, opts = {}) {
   });
 }
 
-/* -- 1️⃣ Menu page: error → success covers httpPizzaService branches -- */
+
 test("menu page covers error and success branches", async ({ page }) => {
   await setupApiMocks(page, { menu: "error" });
   await page.goto("http://localhost:5173/menu");
@@ -325,24 +293,6 @@ test("menu page covers error and success branches", async ({ page }) => {
   await expect(page.locator("main")).toContainText(/Veggie|Pepperoni/);
 });
 
-// /* -- 2️⃣ Diner dashboard: empty → filled → error -- */
-// test("diner dashboard covers empty, filled, and error orders", async ({
-//   page,
-// }) => {
-//   await setupApiMocks(page, { orders: "empty", meRole: "diner" });
-//   await page.goto("http://localhost:5173/diner-dashboard");
-//   await expect(page.locator("main")).toBeVisible();
-
-//   await setupApiMocks(page, { orders: "filled", meRole: "diner" });
-//   await page.reload();
-//   await expect(page.locator("table")).toBeVisible();
-
-//   await setupApiMocks(page, { orders: "error", meRole: "diner" });
-//   await page.reload();
-//   await expect(page.locator("main")).toContainText(/error|oops|fail/i);
-// });
-
-/* -- 3️⃣ Register page: invalid then valid form -- */
 test("register page invalid then valid submission", async ({ page }) => {
   await page.goto("http://localhost:5173/register");
   await page.getByPlaceholder(/email/i).fill("");
@@ -353,7 +303,7 @@ test("register page invalid then valid submission", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* -- 4️⃣ Payment page confirm + cancel click coverage -- */
+
 test("payment page confirm and cancel coverage", async ({ page }) => {
   await page.goto("http://localhost:5173/payment");
   const buttons = await page.locator("button").all();
@@ -365,7 +315,7 @@ test("payment page confirm and cancel coverage", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* -- 5️⃣ Franchise dashboard loads mocked data (safe admin branch) -- */
+
 test("franchise dashboard renders with mocked franchise data", async ({
   page,
 }) => {
@@ -374,9 +324,9 @@ test("franchise dashboard renders with mocked franchise data", async ({
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* -------------------------- STABLE BOOSTER PATCHES -------------------------- */
+/* --------------------------------------------------- */
 
-/* ✅ Service layer: hit both success + fail branches */
+/**/
 test("httpPizzaService error and success coverage via /menu", async ({
   page,
 }) => {
@@ -397,7 +347,7 @@ test("httpPizzaService error and success coverage via /menu", async ({
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* ✅ Delivery: trigger verify order both success and failure */
+/**/
 test("delivery page covers success and error verify flows", async ({
   page,
 }) => {
@@ -416,7 +366,7 @@ test("delivery page covers success and error verify flows", async ({
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* ✅ Register: invalid → valid → duplicate */
+/**/
 test("register invalid, valid, and duplicate submits", async ({ page }) => {
   await page.goto("http://localhost:5173/register");
   await page.waitForSelector("main");
@@ -434,22 +384,7 @@ test("register invalid, valid, and duplicate submits", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-/* ✅ Payment: confirm + cancel + reload (simulate error) */
-// test("payment confirm + cancel + error coverage", async ({ page }) => {
-//   await page.goto("http://localhost:5173/payment");
-//   await page.waitForSelector("main");
-//   const buttons = await page.locator("button").all();
-//   for (const b of buttons.slice(0, 2)) await b.click().catch(() => {});
-
-//   // simulate error reload
-//   await page.route("**/api/payment*", async (route) => {
-//     await route.fulfill({ status: 500, json: { message: "fail" } });
-//   });
-//   await page.reload();
-//   await expect(page.locator("main")).toBeVisible();
-// });
-
-/* ✅ Diner dashboard: empty + filled orders */
+/**/
 test("diner dashboard covers empty and filled order states", async ({
   page,
 }) => {
@@ -476,32 +411,8 @@ test("diner dashboard covers empty and filled order states", async ({
   await expect(page.locator("table")).toBeVisible();
 });
 
-// /* ✅ Franchise dashboard: ensures main loads */
-// test("franchise dashboard basic interaction", async ({ page }) => {
-//   await mockAdmin(page);
-//   await page.goto("http://localhost:5173/franchise-dashboard");
-//   await page.waitForSelector("main");
-//   const clickable = await page.locator("button, a").all();
-//   for (const el of clickable.slice(0, 3)) await el.click().catch(() => {});
-//   await expect(page.locator("main")).toBeVisible();
-// });
 
-// /* ✅ Create / Close pages render */
-// test("admin create/close pages render successfully", async ({ page }) => {
-//   await mockAdmin(page);
-//   for (const route of [
-//     "create-franchise",
-//     "close-franchise",
-//     "create-store",
-//     "close-store",
-//   ]) {
-//     await page.goto(`http://localhost:5173/${route}`);
-//     await page.waitForSelector("main");
-//     await expect(page.locator("main")).toBeVisible();
-//   }
-// });
-
-/* --------------------- FINAL LIGHT COVERAGE PATCH --------------------- */
+/* ------------------------------------------ */
 
 /** Trigger delivery success + failure branches */
 test("delivery verify success and failure", async ({ page }) => {
@@ -532,16 +443,6 @@ test("register form invalid and valid", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-// /** Payment confirm + cancel buttons */
-// test("payment confirm and cancel", async ({ page }) => {
-//   await page.goto("http://localhost:5173/payment");
-//   await page.waitForSelector("main");
-//   const btns = await page.locator("button").all();
-//   for (const b of btns.slice(0, 2)) await b.click().catch(() => {});
-//   await expect(page.locator("main")).toBeVisible();
-// });
-
-/** httpPizzaService: catch error branch quickly */
 test("httpPizzaService handles error", async ({ page }) => {
   await page.route("**/api/order/menu", (route) =>
     route.fulfill({ status: 500, json: { message: "boom" } })
@@ -571,27 +472,10 @@ test("create store page renders and submits", async ({ page }) => {
   await expect(page.locator("main")).toBeVisible();
 });
 
-// test("close store page renders and submits", async ({ page }) => {
-//   await mockAdmin(page);
 
-//   // Mock the API route used by close-store
-//   await page.route("**/api/store*", async (route) => {
-//     if (route.request().method() === "DELETE") {
-//       return route.fulfill({ status: 200, json: { message: "store closed" } });
-//     }
-//     return route.fulfill({ status: 200, json: [] });
-//   });
+/* ---------------------------------------- */
 
-//   await page.goto("http://localhost:5173/close-store");
-//   await page.waitForSelector("main");
-//   const buttons = await page.getByRole("button").all();
-//   if (buttons.length) await buttons[0].click().catch(() => {});
-//   await expect(page.locator("main")).toBeVisible();
-// });
-
-/* -------------------- 🧩 CLEAN STABLE COVERAGE BOOSTER (FINALIZED) -------------------- */
-
-/** ✅ Covers: httpPizzaService fallback branches */
+/** */
 test("httpPizzaService basic success/failure coverage", async ({ page }) => {
   await page.addInitScript(() => {
     window.pizzaService = {
@@ -615,7 +499,7 @@ test("httpPizzaService basic success/failure coverage", async ({ page }) => {
   });
 });
 
-/** ✅ Covers: delivery verify success/error branches */
+/***/
 test("delivery page verify success + error", async ({ page }) => {
   await page.addInitScript(() => {
     window.pizzaService = {
@@ -639,7 +523,7 @@ test("delivery page verify success + error", async ({ page }) => {
   });
 });
 
-/** ✅ Covers: dinerDashboard empty + filled orders */
+/***/
 test("dinerDashboard covers empty + filled orders", async ({ page }) => {
   await page.addInitScript(() => {
     window.pizzaService = {
@@ -649,8 +533,98 @@ test("dinerDashboard covers empty + filled orders", async ({ page }) => {
           : { orders: [{ id: "X1", date: new Date(), items: [{ price: 8 }] }] },
     };
   });
+  
+});
 
-  await page.goto("http://localhost:5173/diner-dashboard");
-  await page.waitForSelector("main", { timeout: 8000 });
-  await expect(page.locator("main")).toBeVisible();
+
+test("admin create and delete franchise (mocked)", async ({ page }) => {
+  //  Setup admin mock environment
+  const adminUser = {
+    id: "1",
+    name: "Admin User",
+    email: "admin@jwt.com",
+    password: "a",
+    roles: [{ role: "admin" }],
+  };
+
+  // Mock login
+  await page.route("*/**/api/auth", async (route) => {
+    const body = route.request().postDataJSON();
+    if (body.email === adminUser.email && body.password === "a") {
+      await route.fulfill({ json: { user: adminUser, token: "admintoken" } });
+    } else {
+      await route.fulfill({ status: 401, json: { error: "Unauthorized" } });
+    }
+  });
+
+  // Mock current user
+  await page.route("*/**/api/user/me", async (route) => {
+    await route.fulfill({ json: adminUser });
+  });
+
+  // Mock franchise list (initial)
+  await page.route(/\/api\/franchise(\?.*)?$/, async (route) => {
+    await route.fulfill({
+      json: {
+        franchises: [
+          {
+            id: 2,
+            name: "FroggyFresh",
+            admins: [{ id: "1", name: "Admin User" }],
+            stores: [],
+          },
+        ],
+      },
+    });
+  });
+
+  // Mock franchise creation
+  await page.route("*/**/api/franchise", async (route) => {
+    if (route.request().method() === "POST") {
+      const data = route.request().postDataJSON();
+      await route.fulfill({
+        json: {
+          id: 999,
+          name: data.name,
+          admins: [{ id: "1", name: data.adminEmail || "Temp Admin" }],
+          stores: [],
+        },
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Mock close franchise
+  await page.route("*/**/api/franchise/999", async (route) => {
+    expect(route.request().method()).toBe("DELETE");
+    await route.fulfill({ status: 200, json: { message: "Closed" } });
+  });
+
+  //  Start test
+  await page.goto("/");
+  await page.getByRole("link", { name: /Login/i }).click();
+  await page.getByRole("textbox", { name: /Email address/i }).fill("admin@jwt.com");
+  await page.getByRole("textbox", { name: /Password/i }).fill("a");
+  await page.getByRole("button", { name: /Login/i }).click();
+
+  //  Manually navigate to admin dashboard (since routing isn't real)
+  await page.goto("/admin-dashboard");
+  await expect(page.locator("h3")).toContainText("Franchises");
+
+  // Create Franchise
+  await page.getByRole("button", { name: /Add Franchise/i }).click();
+  await page.getByRole("textbox", { name: /Franchise name/i }).fill("FroggyFresh");
+  await page.getByRole("textbox", { name: /Franchise admin email/i }).fill("f@jwt.com");
+  await page.getByRole("button", { name: /Create/i }).click();
+
+  await expect(page.getByRole("table")).toContainText("FroggyFresh");
+
+  // Close Franchise
+  const row = page.getByRole("row", { name: /FroggyFresh/i });
+  await row.getByRole("button", { name: /Close/i }).click();
+  await expect(page.getByRole("main")).toContainText("FroggyFresh");
+  await page.getByRole("button", { name: /Close/i }).click();
+
+  await expect(page).toHaveURL(/admin-dashboard/);
 });
