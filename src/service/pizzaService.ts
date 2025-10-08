@@ -2,6 +2,7 @@ enum Role {
   Diner = "diner",
   Franchisee = "franchisee",
   Admin = "admin",
+  isRole = "isRole",
 }
 
 function isRole(user: User | null, role: Role): boolean {

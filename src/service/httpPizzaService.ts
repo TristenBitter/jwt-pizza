@@ -199,7 +199,4 @@ class HttpPizzaService implements PizzaService {
 }
 
 const httpPizzaService = new HttpPizzaService();
-
-/* ✅ Export both class and instance for test compatibility */
-export { HttpPizzaService };
 export default httpPizzaService;

@@ -14,6 +14,13 @@ import {
 } from "../service/pizzaService";
 import { TrashIcon } from "../icons";
 
+/* ✅ Extend the Window interface for typed debug access */
+declare global {
+  interface Window {
+    __lastUser?: User;
+  }
+}
+
 interface Props {
   user: User | null;
 }
@@ -32,7 +39,7 @@ export default function AdminDashboard({ user }: Props) {
     console.log("🔍 [AdminDashboard] user prop:", user);
     if (user) {
       console.log("🔍 [AdminDashboard] roles:", user.roles);
-      (window as any).__lastUser = user; // Expose for Playwright debug
+      window.__lastUser = user; // ✅ typed now, no eslint error
     } else {
       console.warn("⚠️ [AdminDashboard] No user detected!");
     }
