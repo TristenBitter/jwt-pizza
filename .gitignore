@@ -14,4 +14,3 @@ dist
 /playwright/.cache/
 /playwright/.auth/
 .nyc_output
-
