@@ -190,8 +190,8 @@ test("delivery page triggers verify button", async ({ page }) => {
     try {
       await btn.click({ timeout: 1000 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
   await expect(page.locator("main")).toBeVisible();
@@ -208,8 +208,8 @@ test("payment page loads and shows possible confirmations", async ({
     try {
       await btn.click({ timeout: 1000 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
 });
@@ -222,8 +222,8 @@ test("diner dashboard triggers all visible links", async ({ page }) => {
     try {
       await l.click({ timeout: 1000 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
   await expect(page.locator("main")).toBeVisible();
@@ -238,8 +238,8 @@ test("franchise dashboard interacts with data", async ({ page }) => {
     try {
       await item.click({ timeout: 1000 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
   await expect(page.locator("main")).toBeVisible();
@@ -323,8 +323,8 @@ test("payment page confirm and cancel coverage", async ({ page }) => {
     try {
       await btn.click({ timeout: 1000 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
   await expect(page.locator("main")).toBeVisible();
@@ -438,8 +438,8 @@ test("delivery verify success and failure", async ({ page }) => {
     try {
       await b.click({ timeout: 500 });
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   }
   await page.reload();
@@ -514,8 +514,8 @@ test("httpPizzaService basic success/failure coverage", async ({ page }) => {
     try {
       await window.pizzaService.closeStore("bad");
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   });
 });
@@ -541,8 +541,8 @@ test("delivery page verify success + error", async ({ page }) => {
       await window.pizzaService.verifyOrder("throw");
       await window.pizzaService.verifyOrder("good");
     } catch (err) {
-  // Intentionally ignored: some buttons may not be clickable
-}
+        console.warn("Ignored click error:", err.message);
+      }
 
   });
 });
