@@ -3368,3 +3368,122 @@ test("HttpPizzaService branch coverage for register, getUser, franchise ops, doc
   await svc.docs("normal");
   expect(["factory", "regular"]).toContain(called);
 });
+
+/* -------------- FINAL SERVICE BRANCH BOOST (runs in browser) -------------- */
+
+test("httpPizzaService: register error, getUser error, franchise ops, docs (browser-routed)", async ({
+  page,
+}) => {
+  // 1) register() -> failure branch (lines ~95-101)
+  await page.route("**/api/auth", async (route) => {
+    await route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "bad request" }),
+    });
+  });
+  const regFail = await page.evaluate(async () => {
+    const mod = await import("/src/service/httpPizzaService.ts");
+    const svc = new mod.HttpPizzaService();
+    try {
+      await svc.register("Bad", "bad@jwt.com", "xxx");
+      return "no-throw";
+    } catch (e) {
+      return e; // { code, message }
+    }
+  });
+  expect(regFail && regFail.code).toBe(400);
+  await page.unroute("**/api/auth");
+
+  // 2) getUser() -> catch branch removes token (lines ~116-117)
+  await page.addInitScript(() => localStorage.setItem("token", "temp-token"));
+  await page.route("**/api/user/me", async (route) => {
+    await route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "nope" }),
+    });
+  });
+  const getUserResult = await page.evaluate(async () => {
+    const mod = await import("/src/service/httpPizzaService.ts");
+    const svc = new mod.HttpPizzaService();
+    const u = await svc.getUser(); // should catch, clear token, return null
+    return { u, token: localStorage.getItem("token") };
+  });
+  expect(getUserResult.u).toBeNull();
+  expect(getUserResult.token).toBeNull();
+  await page.unroute("**/api/user/me");
+
+  // 3) getFranchises() happy path (lines around single-return ~154-ish)
+  await page.route("**/api/franchise?**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ franchises: [], more: false }),
+    });
+  });
+  const list = await page.evaluate(async () => {
+    const mod = await import("/src/service/httpPizzaService.ts");
+    const svc = new mod.HttpPizzaService();
+    return await svc.getFranchises(0, 10, "*");
+  });
+  expect(list).toMatchObject({ franchises: [], more: false });
+  await page.unroute("**/api/franchise?**");
+
+  // 4) closeFranchise / createStore / closeStore (lines ~172-188)
+  await page.route("**/api/franchise/123", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "{}",
+    });
+  });
+  await page.route("**/api/franchise/123/store", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ id: "555" }),
+    });
+  });
+  await page.route("**/api/franchise/123/store/555", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "{}",
+    });
+  });
+  const storeOps = await page.evaluate(async () => {
+    const mod = await import("/src/service/httpPizzaService.ts");
+    const svc = new mod.HttpPizzaService();
+    await svc.closeFranchise({ id: "123" });
+    const created = await svc.createStore({ id: "123" }, { id: "555" });
+    const closed = await svc.closeStore({ id: "123" }, { id: "555" });
+    return { createdId: created?.id, closed };
+  });
+  expect(storeOps.createdId).toBe("555");
+  expect(storeOps.closed).toBeNull();
+
+  // 5) docs("factory") and docs(other) (line ~193 factory branch + default)
+  await page.route("**/factory/api/docs", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ kind: "factory" }),
+    });
+  });
+  await page.route("**/api/docs", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ kind: "regular" }),
+    });
+  });
+  const docsKinds = await page.evaluate(async () => {
+    const mod = await import("/src/service/httpPizzaService.ts");
+    const svc = new mod.HttpPizzaService();
+    const a = await svc.docs("factory");
+    const b = await svc.docs("anything-else");
+    return [a.kind, b.kind];
+  });
+  expect(docsKinds).toEqual(["factory", "regular"]);
+});
