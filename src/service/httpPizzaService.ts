@@ -12,8 +12,23 @@ import {
   JWTPayload,
 } from "./pizzaService";
 
-const pizzaServiceUrl = import.meta.env.VITE_PIZZA_SERVICE_URL;
-const pizzaFactoryUrl = import.meta.env.VITE_PIZZA_FACTORY_URL;
+/* ✅ Safe and typed Vite/Playwright environment shim */
+interface EnvVars {
+  VITE_PIZZA_SERVICE_URL?: string;
+  VITE_PIZZA_FACTORY_URL?: string;
+}
+
+// use a typed fallback that won’t trigger ts(2339)
+const env: EnvVars =
+  (typeof import.meta !== "undefined" && (import.meta as any).env) || {};
+
+const pizzaServiceUrl =
+  env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
+const pizzaFactoryUrl =
+  env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173/factory";
+
+// const pizzaServiceUrl = import.meta.env.VITE_PIZZA_SERVICE_URL;
+// const pizzaFactoryUrl = import.meta.env.VITE_PIZZA_FACTORY_URL;
 
 class HttpPizzaService implements PizzaService {
   async callEndpoint(
@@ -184,4 +199,7 @@ class HttpPizzaService implements PizzaService {
 }
 
 const httpPizzaService = new HttpPizzaService();
+
+/* ✅ Export both class and instance for test compatibility */
+export { HttpPizzaService };
 export default httpPizzaService;

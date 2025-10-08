@@ -23,7 +23,7 @@ import NotFound from "../views/notFound";
 import Docs from "../views/docs";
 import Breadcrumb from "../components/breadcrumb";
 import { pizzaService } from "../service/service";
-import { Role, User } from "../service/pizzaService";
+import { Role, User, isRole } from "../service/pizzaService";
 import "preline/preline";
 
 declare global {
@@ -57,7 +57,7 @@ export default function App() {
     return !loggedIn();
   }
   function isAdmin() {
-    return Role.isRole(user, Role.Admin);
+    return isRole(user, Role.Admin);
   }
   function isNotAdmin() {
     return !isAdmin();
@@ -96,25 +96,25 @@ export default function App() {
     {
       title: "Create franchise",
       to: "/:subPath?/create-franchise",
-      component: <CreateFranchise />,
+      component: <CreateFranchise user={user} />,
       display: [],
     },
     {
       title: "Close franchise",
       to: "/:subPath?/close-franchise",
-      component: <CloseFranchise />,
+      component: <CloseFranchise user={user} />,
       display: [],
     },
     {
       title: "Create store",
       to: "/:subPath?/create-store",
-      component: <CreateStore />,
+      component: <CreateStore user={user} />,
       display: [],
     },
     {
       title: "Close store",
       to: "/:subPath?/close-store",
-      component: <CloseStore />,
+      component: <CloseStore user={user} />,
       display: [],
     },
     { title: "Payment", to: "/payment", component: <Payment />, display: [] },
