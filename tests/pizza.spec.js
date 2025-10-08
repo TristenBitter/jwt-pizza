@@ -189,7 +189,10 @@ test("delivery page triggers verify button", async ({ page }) => {
   for (const btn of buttons.slice(0, 2)) {
     try {
       await btn.click({ timeout: 1000 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
   await expect(page.locator("main")).toBeVisible();
 });
@@ -204,7 +207,10 @@ test("payment page loads and shows possible confirmations", async ({
   for (const btn of btns) {
     try {
       await btn.click({ timeout: 1000 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
 });
 
@@ -215,7 +221,10 @@ test("diner dashboard triggers all visible links", async ({ page }) => {
   for (const l of links.slice(0, 3)) {
     try {
       await l.click({ timeout: 1000 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
   await expect(page.locator("main")).toBeVisible();
 });
@@ -228,7 +237,10 @@ test("franchise dashboard interacts with data", async ({ page }) => {
   for (const item of items.slice(0, 3)) {
     try {
       await item.click({ timeout: 1000 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
   await expect(page.locator("main")).toBeVisible();
 });
@@ -310,7 +322,10 @@ test("payment page confirm and cancel coverage", async ({ page }) => {
   for (const btn of buttons.slice(0, 2)) {
     try {
       await btn.click({ timeout: 1000 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
   await expect(page.locator("main")).toBeVisible();
 });
@@ -422,7 +437,10 @@ test("delivery verify success and failure", async ({ page }) => {
   for (const b of buttons.slice(0, 2)) {
     try {
       await b.click({ timeout: 500 });
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   }
   await page.reload();
   await expect(page.locator("main")).toBeVisible();
@@ -495,7 +513,10 @@ test("httpPizzaService basic success/failure coverage", async ({ page }) => {
   await page.evaluate(async () => {
     try {
       await window.pizzaService.closeStore("bad");
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   });
 });
 
@@ -519,7 +540,10 @@ test("delivery page verify success + error", async ({ page }) => {
     try {
       await window.pizzaService.verifyOrder("throw");
       await window.pizzaService.verifyOrder("good");
-    } catch {}
+    } catch (err) {
+  // Intentionally ignored: some buttons may not be clickable
+}
+
   });
 });
 
