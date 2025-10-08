@@ -18,17 +18,17 @@ interface EnvVars {
   VITE_PIZZA_FACTORY_URL?: string;
 }
 
-// use a typed fallback that won’t trigger ts(2339)
+/* ✅ Fix: Use type narrowing instead of casting to any */
 const env: EnvVars =
-  (typeof import.meta !== "undefined" && (import.meta as any).env) || {};
+  typeof import.meta !== "undefined" && "env" in import.meta
+    ? ((import.meta as ImportMeta).env as EnvVars)
+    : {};
 
+/* ✅ Environment fallbacks */
 const pizzaServiceUrl =
   env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
 const pizzaFactoryUrl =
   env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173/factory";
-
-// const pizzaServiceUrl = import.meta.env.VITE_PIZZA_SERVICE_URL;
-// const pizzaFactoryUrl = import.meta.env.VITE_PIZZA_FACTORY_URL;
 
 class HttpPizzaService implements PizzaService {
   async callEndpoint(
