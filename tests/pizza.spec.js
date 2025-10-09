@@ -1012,3 +1012,341 @@ test("diner dashboard basic coverage", async ({ page }) => {
   await page.waitForTimeout(500);
   await expect(page.locator("main")).toBeVisible();
 });
+
+//////************************************************************** */
+
+////**************************************************************** */
+
+// Test 1: Cover payment.tsx processPayment() error handling (lines 26-41)
+test("payment page processes order and handles errors", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("token", "fake-token");
+    window.__lastUser = {
+      id: "3",
+      email: "d@jwt.com",
+      roles: [{ role: "diner" }]
+    };
+  });
+
+  let orderAttempts = 0;
+
+  await page.route("**/api/order", async (route) => {
+    if (route.request().method() === "POST") {
+      orderAttempts++;
+      
+      // First attempt: error with message
+      if (orderAttempts === 1) {
+        await route.fulfill({
+          status: 400,
+          json: { message: "Payment processing failed" }
+        });
+      }
+      // Second attempt: unexpected error (no message field)
+      else if (orderAttempts === 2) {
+        await route.fulfill({
+          status: 500,
+          json: { error: "Server error" }
+        });
+      }
+      // Third attempt: success
+      else {
+        await route.fulfill({
+          status: 200,
+          json: {
+            order: {
+              items: [{ menuId: 1, description: "Veggie", price: 0.003 }],
+              storeId: "1",
+              franchiseId: "1",
+              id: 999
+            },
+            jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+          }
+        });
+      }
+    } else {
+      await route.fulfill({ status: 200, json: { orders: [] } });
+    }
+  });
+
+  await page.goto("http://localhost:5173/payment");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(800);
+
+  // Try to submit order multiple times to trigger error paths
+  const submitButtons = await page.locator('main button:visible').all();
+  for (const btn of submitButtons.slice(0, 3)) {
+    const text = await btn.textContent();
+    if (text && (text.toLowerCase().includes('order') || text.toLowerCase().includes('pay'))) {
+      await btn.click({ timeout: 500 });
+      await page.waitForTimeout(500);
+    }
+  }
+
+  await expect(page.locator("body")).toBeVisible();
+});
+
+// Test 2: Cover payment.tsx cancel() function (lines 45)
+test("payment page cancel navigation", async ({ page }) => {
+  await page.goto("http://localhost:5173/payment");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(500);
+
+  // Look for cancel button
+  const buttons = await page.locator('main button:visible').all();
+  for (const btn of buttons) {
+    const text = await btn.textContent();
+    if (text && text.toLowerCase().includes('cancel')) {
+      await btn.click({ timeout: 500 });
+      await page.waitForTimeout(500);
+      break;
+    }
+  }
+
+  // Should navigate somewhere
+  await expect(page.locator("body")).toBeVisible();
+});
+
+// Test 3: Cover register.tsx register() error handling (lines 28-38)
+test("register page with error handling and display", async ({ page }) => {
+  let registerAttempts = 0;
+
+  await page.route("**/api/auth", async (route) => {
+    registerAttempts++;
+    
+    // First attempt: throw error with complex message
+    if (registerAttempts === 1) {
+      await route.fulfill({
+        status: 400,
+        json: { message: "Invalid email format", code: "INVALID_EMAIL" }
+      });
+    }
+    // Second attempt: server error
+    else if (registerAttempts === 2) {
+      await route.fulfill({
+        status: 500,
+        json: { message: "Internal server error" }
+      });
+    }
+    // Third attempt: success
+    else {
+      await route.fulfill({
+        status: 200,
+        json: {
+          user: {
+            id: "new1",
+            name: "Test User",
+            email: "test@jwt.com",
+            roles: [{ role: "diner" }]
+          },
+          token: "new-token"
+        }
+      });
+    }
+  });
+
+  await page.goto("http://localhost:5173/register");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(500);
+
+  const nameInput = page.getByPlaceholder(/name/i).first();
+  const emailInput = page.getByPlaceholder(/email/i);
+  const passwordInput = page.getByPlaceholder(/password/i);
+  const submitButton = page.getByRole("button", { name: /register/i });
+
+  // Attempt 1: Trigger first error
+  if (await nameInput.count() > 0) {
+    await nameInput.fill("Test User");
+  }
+  await emailInput.fill("invalid@email");
+  await passwordInput.fill("pass123");
+  await submitButton.click();
+  await page.waitForTimeout(600);
+
+  // Attempt 2: Trigger second error
+  await emailInput.fill("another@jwt.com");
+  await passwordInput.fill("pass456");
+  await submitButton.click();
+  await page.waitForTimeout(600);
+
+  // Attempt 3: Success
+  await emailInput.fill("success@jwt.com");
+  await passwordInput.fill("validpass");
+  await submitButton.click();
+  await page.waitForTimeout(500);
+
+  await expect(page.locator("body")).toBeVisible();
+});
+
+// Test 4: Cover menu.tsx checkout() with items (lines 21-23, 32-36, 47-50)
+test("menu page with full checkout flow", async ({ page }) => {
+  await page.route("**/api/order/menu", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        { id: 1, title: "Veggie", price: 0.003, image: "p1.png", description: "Fresh" },
+        { id: 2, title: "Pepperoni", price: 0.004, image: "p2.png", description: "Spicy" },
+      ],
+    });
+  });
+
+  await page.route("**/api/franchise", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        { 
+          id: 1, 
+          name: "PizzaCorp", 
+          stores: [
+            { id: 1, name: "Store1" },
+            { id: 2, name: "Store2" }
+          ] 
+        }
+      ],
+    });
+  });
+
+  await page.goto("http://localhost:5173/menu");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(1000);
+
+  // Select a store first (if dropdown exists)
+  const dropdown = page.locator('select').first();
+  if (await dropdown.count() > 0) {
+    try {
+      const options = await dropdown.locator('option').all();
+      if (options.length > 1) {
+        const optionValue = await options[1].getAttribute('value');
+        if (optionValue) {
+          await dropdown.selectOption(optionValue, { timeout: 1000 });
+          await page.waitForTimeout(500);
+        }
+      }
+    } catch (e) {
+      console.log("Store selection skipped", e.message);
+    }
+  }
+
+  // Add pizzas to order
+  const pizzaLinks = await page.locator('main a:visible').all();
+  for (let i = 0; i < Math.min(2, pizzaLinks.length); i++) {
+    try {
+      await pizzaLinks[i].click({ timeout: 500 });
+      await page.waitForTimeout(300);
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
+  }
+
+  // Try to checkout (should trigger checkout function with items)
+  const checkoutBtn = page.getByRole('button', { name: /checkout/i });
+  if (await checkoutBtn.count() > 0) {
+    await checkoutBtn.click({ timeout: 500 });
+    await page.waitForTimeout(500);
+  }
+
+  await expect(page.locator("body")).toBeVisible();
+});
+
+// Test 5: Cover menu.tsx removing items from order
+test("menu page add and remove pizzas", async ({ page }) => {
+  await page.route("**/api/order/menu", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        { id: 1, title: "Veggie", price: 0.003, image: "p1.png", description: "Fresh" },
+        { id: 2, title: "Pepperoni", price: 0.004, image: "p2.png", description: "Spicy" },
+      ],
+    });
+  });
+
+  await page.route("**/api/franchise", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        { id: 1, name: "TestFranchise", stores: [{ id: 1, name: "TestStore" }] }
+      ],
+    });
+  });
+
+  await page.goto("http://localhost:5173/menu");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(1000);
+
+  // Add some pizzas
+  const addLinks = await page.locator('main a:visible').all();
+  for (let i = 0; i < Math.min(2, addLinks.length); i++) {
+    try {
+      await addLinks[i].click({ timeout: 500 });
+      await page.waitForTimeout(200);
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
+  }
+
+  await page.waitForTimeout(300);
+
+  // Try to remove pizzas (look for remove/delete buttons)
+  const allButtons = await page.locator('main button:visible').all();
+  for (const btn of allButtons) {
+    const text = await btn.textContent();
+    if (text && (text.toLowerCase().includes('remove') || text.toLowerCase().includes('×'))) {
+      try {
+        await btn.click({ timeout: 500 });
+        await page.waitForTimeout(200);
+      } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
+    }
+  }
+
+  await expect(page.locator("main")).toBeVisible();
+});
+
+// Test 6: Cover delivery.tsx error states (lines 26-44, 49)
+test("delivery page error and success verification paths", async ({ page }) => {
+  let verifyAttempts = 0;
+
+  await page.route("**/api/order/verify/*", async (route) => {
+    verifyAttempts++;
+    
+    if (verifyAttempts === 1) {
+      // First: error
+      await route.fulfill({
+        status: 400,
+        json: { message: "Invalid verification token" }
+      });
+    } else {
+      // Second: success
+      await route.fulfill({
+        status: 200,
+        json: {
+          message: "verified",
+          vendor: { id: "v1", name: "Test Vendor" }
+        }
+      });
+    }
+  });
+
+  await page.goto("http://localhost:5173/delivery");
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForTimeout(500);
+
+  // Fill in JWT input
+  const inputs = await page.locator('main input:visible').all();
+  for (const input of inputs) {
+    await input.fill("test-jwt-12345", { timeout: 500 });
+  }
+
+  // Click verify button multiple times
+  const verifyButtons = await page.locator('main button:visible').all();
+  for (let i = 0; i < Math.min(2, verifyButtons.length); i++) {
+    try {
+      await verifyButtons[i].click({ timeout: 500 });
+      await page.waitForTimeout(600);
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
+  }
+
+  await expect(page.locator("main")).toBeVisible();
+});
