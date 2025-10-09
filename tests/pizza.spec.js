@@ -103,18 +103,18 @@ test("menu page with franchise selection and pizza adding", async ({ page }) => 
   try {
     await page.getByRole("combobox").selectOption("1", { timeout: 2000 });
     await page.waitForTimeout(300);
-  } catch (e) {
-    // Continue if dropdown not available
-  }
+  } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
 
   // Click multiple pizzas
   const pizzaLinks = await page.getByRole("link").all();
   for (let i = 0; i < Math.min(2, pizzaLinks.length); i++) {
     try {
       await pizzaLinks[i].click({ timeout: 1000 });
-    } catch (e) {
-      // Continue if click fails
-    }
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
   }
 
   await expect(page.locator("main")).toBeVisible();
@@ -168,9 +168,9 @@ test("payment page loads and interacts with order", async ({ page }) => {
     try {
       await btn.click({ timeout: 500 });
       await page.waitForTimeout(200);
-    } catch (e) {
-      // Continue
-    }
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
   }
 
   await expect(page.locator("main")).toBeVisible();
@@ -958,9 +958,9 @@ test("payment page with actual order placement flow", async ({ page }) => {
     try {
       await payButton.click({ timeout: 2000 });
       await page.waitForTimeout(500);
-    } catch (e) {
-      console.log("Pay button click skipped");
-    }
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
   }
 
   await expect(page.locator("main")).toBeVisible();
@@ -1014,8 +1014,8 @@ test("close store page renders and handles submission", async ({ page }) => {
       try {
         await btn.click({ timeout: 500 });
         await page.waitForTimeout(200);
-      } catch (e) {
-        // Continue
+      } catch (err) {
+        console.warn("Ignored click error:", err.message);
       }
     }
 
@@ -1076,9 +1076,9 @@ test("menu page with franchise change and error handling", async ({ page }) => {
       await dropdown.selectOption("2", { timeout: 2000 });
       await page.waitForTimeout(500);
     }
-  } catch (e) {
-    console.log("Franchise selection skipped");
-  }
+  } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
 
   // Add multiple pizzas
   const links = await page.getByRole("link").all();
@@ -1086,9 +1086,9 @@ test("menu page with franchise change and error handling", async ({ page }) => {
     try {
       await links[i].click({ timeout: 1000 });
       await page.waitForTimeout(200);
-    } catch (e) {
-      // Continue
-    }
+    } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
   }
 
   await expect(page.locator("main")).toBeVisible();
@@ -1194,9 +1194,9 @@ test("diner dashboard with orders and navigation", async ({ page }) => {
     if (tableRows.length > 1) {
       await tableRows[1].click({ timeout: 500 });
     }
-  } catch (e) {
-    // Continue - table might not have clickable rows
-  }
+  } catch (err) {
+        console.warn("Ignored click error:", err.message);
+      }
 
   await expect(page.locator("main")).toBeVisible();
 });
