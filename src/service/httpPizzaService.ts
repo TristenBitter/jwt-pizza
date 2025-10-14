@@ -12,19 +12,16 @@ import {
   JWTPayload,
 } from "./pizzaService";
 
-/* ✅ Safe and typed Vite/Playwright environment shim */
 interface EnvVars {
   VITE_PIZZA_SERVICE_URL?: string;
   VITE_PIZZA_FACTORY_URL?: string;
 }
 
-/* ✅ Fix: Use type narrowing instead of casting to any */
 const env: EnvVars =
   typeof import.meta !== "undefined" && "env" in import.meta
     ? ((import.meta as ImportMeta).env as EnvVars)
     : {};
 
-/* ✅ Environment fallbacks */
 const pizzaServiceUrl =
   env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
 const pizzaFactoryUrl =
@@ -196,6 +193,23 @@ class HttpPizzaService implements PizzaService {
     }
     return (await this.callEndpoint("/api/docs")) as Endpoints;
   }
+
+  async updateUser(updatedUser: User): Promise<User> {
+  const result = (await this.callEndpoint(
+    `/api/user/${updatedUser.id}`,
+    'PUT',
+    updatedUser
+  )) as { user: User; token?: string };
+
+  // Persist the token if returned
+  if (result.token) {
+    localStorage.setItem('token', result.token);
+  }
+
+  // Return the updated user object
+  return result.user;
+}
+  
 }
 
 const httpPizzaService = new HttpPizzaService();
