@@ -40,7 +40,7 @@ export default function DinerDashboard(props: Props) {
 
   // Updates user both locally and on backend
   async function updateUser() {
-    let updatedUser: User = {
+    const updatedUser: User = {
       id: user.id,
       name: nameRef.current?.value ?? user.name,
       email: emailRef.current?.value ?? user.email,
