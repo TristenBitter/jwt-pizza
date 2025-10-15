@@ -47,10 +47,6 @@ test("adminDashboard: list, filter, paginate, and delete user", async ({
   }
 
   // Verify pagination controls exist (don't click them)
-  const prevBtn = page.getByRole("button", { name: /prev/i });
-  const nextBtn = page.getByRole("button", { name: /next/i });
-  const hasPagination =
-    (await prevBtn.count()) > 0 || (await nextBtn.count()) > 0;
 
   // Delete user
   const deleteButtons = page.getByRole("button", { name: /delete/i });
