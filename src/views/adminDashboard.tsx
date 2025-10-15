@@ -25,8 +25,8 @@ interface Props {
 
 export default function AdminDashboard({ user }: Props) {
   const navigate = useNavigate();
-  const [view, setView] = React.useState<'franchises' | 'users'>('franchises');
-  
+  const [view, setView] = React.useState<"franchises" | "users">("franchises");
+
   // Franchise state
   const [franchiseList, setFranchiseList] = React.useState<FranchiseList>({
     franchises: [],
@@ -46,7 +46,7 @@ export default function AdminDashboard({ user }: Props) {
   // Load franchises
   React.useEffect(() => {
     (async () => {
-      if (user && isRole(user, Role.Admin) && view === 'franchises') {
+      if (user && isRole(user, Role.Admin) && view === "franchises") {
         const list = await pizzaService.getFranchises(franchisePage, 10, "*");
         setFranchiseList(list);
       }
@@ -56,9 +56,13 @@ export default function AdminDashboard({ user }: Props) {
   // Load users
   React.useEffect(() => {
     (async () => {
-      if (user && isRole(user, Role.Admin) && view === 'users') {
+      if (user && isRole(user, Role.Admin) && view === "users") {
         const nameFilter = userFilterRef.current?.value || "";
-        const list = await pizzaService.getUsers(userPage, 10, nameFilter ? `*${nameFilter}*` : "*");
+        const list = await pizzaService.getUsers(
+          userPage,
+          10,
+          nameFilter ? `*${nameFilter}*` : "*"
+        );
         setUserList(list);
       }
     })();
@@ -93,8 +97,8 @@ export default function AdminDashboard({ user }: Props) {
 
   const deleteUser = async (userId: string | undefined) => {
     if (!userId) return;
-    
-    if (window.confirm('Are you sure you want to delete this user?')) {
+
+    if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await pizzaService.deleteUser(userId);
         // Reload the user list
@@ -106,7 +110,8 @@ export default function AdminDashboard({ user }: Props) {
         );
         setUserList(list);
       } catch (error) {
-        alert('Failed to delete user');
+        console.error("Failed to delete user:", error);
+        alert("Failed to delete user");
       }
     }
   };
@@ -124,35 +129,37 @@ export default function AdminDashboard({ user }: Props) {
   }
 
   return (
-    <View title={view === 'users' ? 'User List' : 'Franchise Dashboard'}>
+    <View title={view === "users" ? "User List" : "Franchise Dashboard"}>
       <div className="text-start py-8 px-4 sm:px-6 lg:px-8">
         {/* View Toggle */}
         <div className="flex gap-4 mb-6">
           <button
-            onClick={() => setView('franchises')}
+            onClick={() => setView("franchises")}
             className={`px-4 py-2 rounded-lg font-semibold ${
-              view === 'franchises'
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-200 text-gray-700'
+              view === "franchises"
+                ? "bg-orange-500 text-white"
+                : "bg-gray-200 text-gray-700"
             }`}
           >
             Franchises
           </button>
           <button
-            onClick={() => setView('users')}
+            onClick={() => setView("users")}
             className={`px-4 py-2 rounded-lg font-semibold ${
-              view === 'users'
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-200 text-gray-700'
+              view === "users"
+                ? "bg-orange-500 text-white"
+                : "bg-gray-200 text-gray-700"
             }`}
           >
             Users
           </button>
         </div>
 
-        {view === 'franchises' ? (
+        {view === "franchises" ? (
           <>
-            <h3 className="text-neutral-100 text-xl mb-4">Franchise Dashboard</h3>
+            <h3 className="text-neutral-100 text-xl mb-4">
+              Franchise Dashboard
+            </h3>
             <div className="bg-neutral-100 overflow-clip my-4">
               <div className="flex flex-col">
                 <div className="-m-1.5 overflow-x-auto">
@@ -179,7 +186,10 @@ export default function AdminDashboard({ user }: Props) {
                           </tr>
                         </thead>
                         {franchiseList.franchises.map((franchise, findex) => (
-                          <tbody key={findex} className="divide-y divide-gray-200">
+                          <tbody
+                            key={findex}
+                            className="divide-y divide-gray-200"
+                          >
                             <tr className="border-neutral-500 border-t-2">
                               <td className="text-start px-2 whitespace-nowrap text-sm font-semibold text-orange-600">
                                 {franchise.name}
@@ -250,14 +260,18 @@ export default function AdminDashboard({ user }: Props) {
                             <td colSpan={5} className="text-end">
                               <button
                                 className="w-12 p-1 text-sm rounded-lg border bg-white m-1 hover:bg-orange-200 disabled:bg-neutral-300"
-                                onClick={() => setFranchisePage(franchisePage - 1)}
+                                onClick={() =>
+                                  setFranchisePage(franchisePage - 1)
+                                }
                                 disabled={franchisePage <= 0}
                               >
                                 « Prev
                               </button>
                               <button
                                 className="w-12 p-1 text-sm rounded-lg border bg-white m-1 hover:bg-orange-200 disabled:bg-neutral-300"
-                                onClick={() => setFranchisePage(franchisePage + 1)}
+                                onClick={() =>
+                                  setFranchisePage(franchisePage + 1)
+                                }
                                 disabled={!franchiseList.more}
                               >
                                 Next »
@@ -312,7 +326,8 @@ export default function AdminDashboard({ user }: Props) {
                                 {u.email}
                               </td>
                               <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-800">
-                                {u.roles?.map((r) => r.role).join(", ") || "diner"}
+                                {u.roles?.map((r) => r.role).join(", ") ||
+                                  "diner"}
                               </td>
                               <td className="px-6 py-2 whitespace-nowrap text-end text-sm font-medium">
                                 <button
