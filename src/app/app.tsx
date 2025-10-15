@@ -24,7 +24,8 @@ import Docs from "../views/docs";
 import Breadcrumb from "../components/breadcrumb";
 import { pizzaService } from "../service/service";
 import { Role, User, isRole } from "../service/pizzaService";
-import "preline/preline";
+
+
 
 declare global {
   interface Window {
@@ -65,7 +66,12 @@ export default function App() {
 
   const navItems = [
     { title: "Home", to: "/", component: <Home />, display: [] },
-        { title: 'Diner', to: '/diner-dashboard', component: <DinerDashboard user={user} setUser={setUser} />, display: [] },
+    {
+      title: "Diner",
+      to: "/diner-dashboard",
+      component: <DinerDashboard user={user} setUser={setUser} />,
+      display: [],
+    },
     { title: "Order", to: "/menu", component: <Menu />, display: ["nav"] },
     {
       title: "Franchise",
@@ -148,7 +154,6 @@ export default function App() {
     <div className="bg-gray-800">
       <Header user={user} navItems={navItems} />
       <Breadcrumb location={location.pathname.replace("/", "")} />
-
       <main className="size-full">
         <Routes>
           {navItems.map((item) => (
@@ -156,7 +161,6 @@ export default function App() {
           ))}
         </Routes>
       </main>
-
       <Footer navItems={navItems} />
     </div>
   );

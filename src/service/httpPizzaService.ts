@@ -10,6 +10,7 @@ import {
   Endpoints,
   OrderResponse,
   JWTPayload,
+  UserListResponse,
 } from "./pizzaService";
 
 interface EnvVars {
@@ -115,6 +116,38 @@ class HttpPizzaService implements PizzaService {
     }
   }
 
+  async updateUser(updatedUser: User): Promise<User> {
+    const result = (await this.callEndpoint(
+      `/api/user/${updatedUser.id}`,
+      'PUT',
+      updatedUser
+    )) as { user: User; token?: string };
+
+    // Persist the token if returned
+    if (result.token) {
+      localStorage.setItem('token', result.token);
+    }
+
+    // Return the updated user object
+    return result.user;
+  }
+
+  async getUsers(page: number, limit: number, name: string): Promise<UserListResponse> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      name: name || '*'
+    });
+    
+    const response = await this.callEndpoint(`/api/user?${params.toString()}`, 'GET') as UserListResponse;
+    return response;
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    await this.callEndpoint(`/api/user/${userId}`, 'DELETE');
+    return Promise.resolve();
+  }
+
   async getMenu(): Promise<Menu> {
     return (await this.callEndpoint("/api/order/menu")) as Menu;
   }
@@ -193,23 +226,6 @@ class HttpPizzaService implements PizzaService {
     }
     return (await this.callEndpoint("/api/docs")) as Endpoints;
   }
-
-  async updateUser(updatedUser: User): Promise<User> {
-  const result = (await this.callEndpoint(
-    `/api/user/${updatedUser.id}`,
-    'PUT',
-    updatedUser
-  )) as { user: User; token?: string };
-
-  // Persist the token if returned
-  if (result.token) {
-    localStorage.setItem('token', result.token);
-  }
-
-  // Return the updated user object
-  return result.user;
-}
-  
 }
 
 const httpPizzaService = new HttpPizzaService();

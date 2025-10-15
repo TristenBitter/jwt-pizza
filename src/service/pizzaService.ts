@@ -97,6 +97,13 @@ type JWTPayload = {
   payload: string;
 };
 
+// Replace the interface in your pizzaService.ts with this:
+
+interface UserListResponse {
+  users: User[];
+  more: boolean;
+}
+
 interface PizzaService {
   login(email: string, password: string): Promise<User>;
   register(email: string, password: string, role: string): Promise<User>;
@@ -118,6 +125,8 @@ interface PizzaService {
   closeStore(franchise: Franchise, store: Store): Promise<null>;
   docs(docType: string): Promise<Endpoints>;
   updateUser(user: User): Promise<User>;
+  getUsers(page: number, limit: number, name: string): Promise<UserListResponse>;
+  deleteUser(userId: string): Promise<void>; // Changed from number to string
 }
 
 export {
@@ -137,4 +146,5 @@ export {
   Endpoints,
   OrderResponse,
   JWTPayload,
+  UserListResponse, 
 };
