@@ -895,7 +895,7 @@ test("admin create and delete franchise (mocked)", async ({ page }) => {
 
   //  Manually navigate to admin dashboard (since routing isn't real)
   await page.goto("/admin-dashboard");
-  await expect(page.locator("h3")).toContainText("/Franchise/i");
+  await expect(page.locator("h3")).toContainText("Franchise Dashboard");
 
   // Create Franchise
   await page.getByRole("button", { name: /Add Franchise/i }).click();
