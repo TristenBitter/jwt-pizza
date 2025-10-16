@@ -1003,9 +1003,9 @@ test.describe("Admin Dashboard - Mocked User Management", () => {
     await page.waitForSelector("main");
 
     // Should show franchise data
-    const content = (await page.locator("main").textContent()) || "";
+    //const content = (await page.locator("main").textContent()) || "";
     //const hasFranchiseData =
-    content.includes("My Franchise") || content.includes("Store");
+    //content.includes("My Franchise") || content.includes("Store");
 
     // Test passes if page loaded
     await expect(page.locator("main")).toBeVisible();
