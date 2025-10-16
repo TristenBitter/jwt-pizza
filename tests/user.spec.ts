@@ -793,7 +793,7 @@ test.describe("Admin Dashboard - Mocked User Management", () => {
     await page.waitForSelector("main");
 
     // Should show franchise data
-    const content = await page.locator("main").textContent();
+    //const content = await page.locator("main").textContent();
     //expect(content).toContain("PizzaCorp");
 
     // Try pagination buttons (covers pagination code)
@@ -1004,8 +1004,8 @@ test.describe("Admin Dashboard - Mocked User Management", () => {
 
     // Should show franchise data
     const content = (await page.locator("main").textContent()) || "";
-    const hasFranchiseData =
-      content.includes("My Franchise") || content.includes("Store");
+    //const hasFranchiseData =
+    content.includes("My Franchise") || content.includes("Store");
 
     // Test passes if page loaded
     await expect(page.locator("main")).toBeVisible();
@@ -1097,8 +1097,8 @@ test.describe("Admin Dashboard - Mocked User Management", () => {
     await page.waitForSelector("main");
 
     // Should show menu items
-    const content = (await page.locator("main").textContent()) || "";
-    const hasMenuItems = /veggie|pepperoni|pizza/i.test(content);
+    //const content = (await page.locator("main").textContent()) || "";
+    //const hasMenuItems = /veggie|pepperoni|pizza/i.test(content);
 
     await expect(page.locator("main")).toBeVisible();
   });
