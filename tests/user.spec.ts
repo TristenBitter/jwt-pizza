@@ -1458,7 +1458,7 @@ test("payment page with valid order", async ({ page }) => {
       ],
     };
     // Store in window for the payment component to use
-    (window as any).__orderData = orderData;
+    (window as unknown as { __orderData: unknown }).__orderData = orderData;
   });
 
   await page.waitForSelector("main", { timeout: 10000 });
@@ -1524,7 +1524,7 @@ test("payment page handles order error", async ({ page }) => {
     await page.waitForTimeout(1000);
 
     // Should show error message (covers setErrorMessage lines)
-    const content = (await page.locator("main").textContent()) || "";
+    //const content = (await page.locator("main").textContent()) || "";
     // Error might be shown or page might handle it differently
   }
 
