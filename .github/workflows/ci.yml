@@ -1,16 +1,13 @@
 name: CI Pipeline
-
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
 jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0.29
@@ -25,22 +22,17 @@ jobs:
           --health-start-period=10s
           --health-timeout=5s
           --health-retries=10
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
-
       - name: Install dependencies
         run: npm ci
-
       - name: Lint
         run: npm run lint
-
       - name: Write config file
         run: |
           cat > src/config.js << 'EOF'
@@ -62,25 +54,55 @@ jobs:
             },
           };
           EOF
-
-      # ✅ Install Playwright browsers BEFORE running tests
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-
-      # ✅ Single unified test + coverage step
       - name: Run Playwright tests with coverage
         run: npm run test:coverage
-
       - name: Set version
         id: set_version
         run: |
           version=$(date +'%Y%m%d.%H%M%S')
           echo "version=$version" >> "$GITHUB_OUTPUT"
           printf '{"version": "%s" }' "$version" > src/version.json
-
       - name: Update coverage badge
         run: |
           coverage=$(jq '.total.lines.pct' coverage/coverage-summary.json)
           color=$(echo "$coverage < 80" | bc | awk '{if ($1) print "red"; else print "green"}')
           curl -s -X POST "https://pizza-factory.cs329.click/api/badge/${{ secrets.NET_ID }}/jwtpizzacoverage?label=Coverage&value=$coverage%25&color=$color" \
             -H "authorization: bearer ${{ secrets.FACTORY_API_KEY }}"
+      
+      # NEW: Build the frontend
+      - name: Build frontend
+        run: npm run build
+      
+      # NEW: Upload artifact for deployment
+      - name: Update dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: dist/
+
+  # NEW: Deploy job
+  deploy:
+    needs: build
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create OIDC token to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/${{ secrets.CI_IAM_ROLE }}
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: package
+          path: dist/
+
+      - name: Push to AWS S3
+        run: |
+          aws s3 cp dist s3://${{ secrets.APP_BUCKET }} --recursive
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.DISTRIBUTION_ID }} --paths "/*"
