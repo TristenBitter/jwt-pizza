@@ -23,10 +23,12 @@ const env: EnvVars =
     ? ((import.meta as ImportMeta).env as EnvVars)
     : {};
 
-const pizzaServiceUrl =
-  env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
-const pizzaFactoryUrl =
-  env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173/factory";
+// const pizzaServiceUrl =
+//   env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
+// const pizzaFactoryUrl =
+//   env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173/factory";
+const pizzaServiceUrl = env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173";
+const pizzaFactoryUrl = env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173";
 
 class HttpPizzaService implements PizzaService {
   async callEndpoint(
@@ -119,32 +121,39 @@ class HttpPizzaService implements PizzaService {
   async updateUser(updatedUser: User): Promise<User> {
     const result = (await this.callEndpoint(
       `/api/user/${updatedUser.id}`,
-      'PUT',
+      "PUT",
       updatedUser
     )) as { user: User; token?: string };
 
     // Persist the token if returned
     if (result.token) {
-      localStorage.setItem('token', result.token);
+      localStorage.setItem("token", result.token);
     }
 
     // Return the updated user object
     return result.user;
   }
 
-  async getUsers(page: number, limit: number, name: string): Promise<UserListResponse> {
+  async getUsers(
+    page: number,
+    limit: number,
+    name: string
+  ): Promise<UserListResponse> {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
-      name: name || '*'
+      name: name || "*",
     });
-    
-    const response = await this.callEndpoint(`/api/user?${params.toString()}`, 'GET') as UserListResponse;
+
+    const response = (await this.callEndpoint(
+      `/api/user?${params.toString()}`,
+      "GET"
+    )) as UserListResponse;
     return response;
   }
 
   async deleteUser(userId: string): Promise<void> {
-    await this.callEndpoint(`/api/user/${userId}`, 'DELETE');
+    await this.callEndpoint(`/api/user/${userId}`, "DELETE");
     return Promise.resolve();
   }
 
