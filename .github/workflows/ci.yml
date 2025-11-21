@@ -71,18 +71,18 @@ jobs:
           curl -s -X POST "https://pizza-factory.cs329.click/api/badge/${{ secrets.NET_ID }}/jwtpizzacoverage?label=Coverage&value=$coverage%25&color=$color" \
             -H "authorization: bearer ${{ secrets.FACTORY_API_KEY }}"
       
-      # NEW: Build the frontend
       - name: Build frontend
+        env:
+          VITE_PIZZA_SERVICE_URL: https://pizza-service.bamboogarden.click/api
+          VITE_PIZZA_FACTORY_URL: https://pizza-factory.cs329.click
         run: npm run build
       
-      # NEW: Upload artifact for deployment
       - name: Update dist artifact
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: dist/
 
-  # NEW: Deploy job
   deploy:
     needs: build
     permissions:
