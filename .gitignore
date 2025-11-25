@@ -6,6 +6,8 @@ config.js
 coverage
 dist
 **/.vite
+.env.production
+.env.developement
 
 # Playwright
 /test-results/
