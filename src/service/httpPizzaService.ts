@@ -23,12 +23,10 @@ const env: EnvVars =
     ? ((import.meta as ImportMeta).env as EnvVars)
     : {};
 
-// const pizzaServiceUrl =
-//   env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173/api";
-// const pizzaFactoryUrl =
-//   env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173/factory";
-const pizzaServiceUrl = env.VITE_PIZZA_SERVICE_URL ?? "http://localhost:5173";
-const pizzaFactoryUrl = env.VITE_PIZZA_FACTORY_URL ?? "http://localhost:5173";
+const pizzaServiceUrl =
+  env.VITE_PIZZA_SERVICE_URL ?? "https://pizza.bamboogarden.click";
+const pizzaFactoryUrl =
+  env.VITE_PIZZA_FACTORY_URL ?? "https://pizza-factory.cs329.click";
 
 class HttpPizzaService implements PizzaService {
   async callEndpoint(
