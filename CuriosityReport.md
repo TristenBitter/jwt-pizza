@@ -5,10 +5,18 @@ Serverless runtimes have become one of the most important shifts in modern backe
 For this report, I wanted to understand how these three runtimes compare in terms of performance, developer experience, security, and real-world use cases. I set up small test deployments for each runtime and reviewed official benchmarks to see how they compare.
 
 Quick Comparison Table
-| Header 1 | Header 2 | Header 3 |
-| :------- | :------: | -------: |
-| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
-| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+| Feature | AWS Lambda | Cloudflare Workers | Deno Deploy |
+| :------- | :------: | -------: | -------: |
+| Runtime Model | Firecracker micro-VMs | V8 isolates | V8 isolates (Deno runtime) |
+| Cold Start Speed | Slowest | Fastest | Very fast |
+| Global Distribution | Regional by default | Global (300+ PoPs) | Global |
+| Native TypeScript | No | Yes | Yes |
+| Max Execution Time | Up to 15 minutes | ~30 seconds | ~30 seconds |
+| Memory Limit | Up to 10 GB | ~128 MB | ~150 MB |
+| Cost Model | Pay per duration & memory | Pay per request | Pay per request |
+| Best Strength | Deep AWS integration | Latency & speed | TypeScript-first |
+| Released | 2014 | 2017 | 2021 |
+
 
 AWS Lambda
 
