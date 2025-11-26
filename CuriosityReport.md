@@ -29,7 +29,8 @@ For this report, I wanted to understand how these three runtimes compare in term
 
 ### Example Code
 
-    //AWS Lambda
+//AWS Lambda 
+
     exports.handler = async (event) => {
       return {
         statusCode: 200,
@@ -37,15 +38,16 @@ For this report, I wanted to understand how these three runtimes compare in term
       };
     };
 
-    //Cloudflare Worker
+//Cloudflare Worker
+    
     export default {
       async fetch(request) {
         return new Response("Hello from Cloudflare Workers");
       }
     };
 
-
-    //Deno Deploy 
+//Deno Deploy 
+    
     addEventListener("fetch", (event) => {
       event.respondWith(new Response("Hello from Deno Deploy"));
     });
