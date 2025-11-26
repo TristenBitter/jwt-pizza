@@ -6,13 +6,13 @@ Serverless runtimes have become one of the most important shifts in modern backe
 
 -------------------------------------------------------------------------------------------
 ### Definitions
-**<u>Cold Start</u>**:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
+***Cold Start***:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
 
-<u>__V8 Isolates__</u>:  V8 isolates are lightweight, sandboxed environments used by Cloudflare Workers and Deno Deploy to run JavaScript. They start almost instantly, which is why these platforms have very fast cold start times.
+***V8 Isolates***:  V8 isolates are lightweight, sandboxed environments used by Cloudflare Workers and Deno Deploy to run JavaScript. They start almost instantly, which is why these platforms have very fast cold start times.
 
-<u>__MicroVMs__</u> (Firecracker):  AWS Lambda uses micro virtual machines (microVMs) built with Firecracker. They are more secure and isolated but slower to start, which leads to longer cold starts compared to V8 isolates.
+***Micro-VMs***(Firecracker):  AWS Lambda uses micro virtual machines (microVMs) built with Firecracker. They are more secure and isolated but slower to start, which leads to longer cold starts compared to V8 isolates.
 
-<u>__Edge Computing__</u>: Edge computing means running your code on servers that are physically close to users around the world. This reduces latency and makes applications feel faster.
+***Edge Computing***: Edge computing means running your code on servers that are physically close to users around the world. This reduces latency and makes applications feel faster.
 
 -------------------------------------------------------------------------------------------
 ### Quick Comparison Table
