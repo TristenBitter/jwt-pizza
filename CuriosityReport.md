@@ -104,6 +104,5 @@ Cloudflare Workers and Deno Deploy are cheaper for high-traffic, lightweight, ed
 ### Conclusion
 
 Each runtime excels in different areas. AWS Lambda is a great fit for enterprise systems, heavy tasks, or projects that already rely on AWS infrastructure. Cloudflare Workers dominate in global speed and low latency, making them ideal for fast APIs, authentication flows, and edge rendering. Deno Deploy offers a clean, modern, TypeScript-first developer experience with strong performance and global distribution.
-
 There is no single “best” runtime for every situation. Lambda focuses on reliability and integration, Cloudflare Workers focuses on speed and global reach, and Deno Deploy focuses on modern web standards. Understanding those strengths makes it much easier to choose the right platform for the right project.
 -------------------------------------------------------------------------------------------
