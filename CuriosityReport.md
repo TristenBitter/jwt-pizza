@@ -79,7 +79,8 @@ Deno Deploy
 
 ### Performance Comparison
 
-***Cold Start Times***
+***Cold Start Times***:
+
 Cloudflare Workers: ~0–1 ms
 
 Deno Deploy: ~5–20 ms
