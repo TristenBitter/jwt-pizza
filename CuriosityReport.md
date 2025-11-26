@@ -17,22 +17,40 @@ For this report, I wanted to understand how these three runtimes compare in term
 | Best Strength | Deep AWS integration | Latency & speed | TypeScript-first |
 | Released | 2014 | 2017 | 2021 |
 
-
-    This is the first line.\
-    This is the second line.
-
     
 ### AWS Lambda
   Lambda is the most mature serverless platform and still the default choice for enterprise systems. It runs functions inside micro VMs built on top of Firecracker, which creates strong isolation but also introduces slower cold starts. Lambda integrates with almost every AWS service S3, DynamoDB, API Gateway, EventBridge—and can handle heavy workloads with large memory and long execution windows.
   In practice, Lambda feels more “ops-heavy” than the newer runtimes. TypeScript requires a build step, deployments require bundling or container images, and you spend more time dealing with IAM and CloudWatch logs. The trade-off is reliability and flexibility. If a project already lives inside AWS, Lambda remains a safe and battle-tested option.
 
-This is the first line.\
-This is the second line.
-  
 
 ### Cloudflare Workers
 
 ### Deno Deploy
+
+### Example Code
+
+    //AWS Lambda
+    exports.handler = async (event) => {
+      return {
+        statusCode: 200,
+        body: "Hello from AWS Lambda"
+      };
+    };
+
+    //Cloudflare Worker
+    export default {
+      async fetch(request) {
+        return new Response("Hello from Cloudflare Workers");
+      }
+    };
+
+
+    //Deno Deploy 
+    addEventListener("fetch", (event) => {
+      event.respondWith(new Response("Hello from Deno Deploy"));
+    });
+
+
 
 ### Performance Comparison
 
