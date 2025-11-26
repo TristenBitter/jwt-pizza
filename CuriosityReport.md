@@ -81,11 +81,11 @@ Deno Deploy
 
 ***Cold Start Times***:
 
-Cloudflare Workers: ~0–1 ms
+* Cloudflare Workers: ~0–1 ms
 
-Deno Deploy: ~5–20 ms
+* Deno Deploy: ~5–20 ms
 
-AWS Lambda: ~100–800 ms (depending on runtime and package size)
+* AWS Lambda: ~100–800 ms (depending on runtime and package size)
 
 * Cloudflare Workers clearly lead here because isolates spin up dramatically faster than micro-VMs. Deno Deploy is also fast, but still a bit slower than Cloudflare Workers under heavy load. Lambda remains the slowest, although once warm, it performs well.
 
