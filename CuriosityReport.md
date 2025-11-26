@@ -1,17 +1,18 @@
 # AWS Lambda vs Cloudflare Workers vs Deno Deploy
 
 ### Introduction
-Serverless runtimes have become one of the most important shifts in modern backend development. AWS Lambda has been the industry standard for nearly a decade, but newer edge-focused platforms like Cloudflare Workers and Deno Deploy have pushed expectations for speed, cold start performance, and global distribution.
+
+   Serverless runtimes have become one of the most important shifts in modern backend development. AWS Lambda has been the industry standard for nearly a decade, but newer edge-focused platforms like Cloudflare Workers and Deno Deploy have pushed expectations for speed, cold start performance, and global distribution.
 For this report, I wanted to understand how these three runtimes compare in terms of performance, developer experience, security, and real-world use cases. I set up small test deployments for each runtime and reviewed official benchmarks to see how they compare.
 -------------------------------------------------------------------------------------------
 ### Definitions
-__Cold Start__:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
+<u>__Cold Start__</u>:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
 
-__V8 Isolates__:  V8 isolates are lightweight, sandboxed environments used by Cloudflare Workers and Deno Deploy to run JavaScript. They start almost instantly, which is why these platforms have very fast cold start times.
+<u>__V8 Isolates__</u>:  V8 isolates are lightweight, sandboxed environments used by Cloudflare Workers and Deno Deploy to run JavaScript. They start almost instantly, which is why these platforms have very fast cold start times.
 
-__MicroVMs__ (Firecracker):  AWS Lambda uses micro virtual machines (microVMs) built with Firecracker. They are more secure and isolated but slower to start, which leads to longer cold starts compared to V8 isolates.
+<u>__MicroVMs__</u> (Firecracker):  AWS Lambda uses micro virtual machines (microVMs) built with Firecracker. They are more secure and isolated but slower to start, which leads to longer cold starts compared to V8 isolates.
 
-__Edge Computing__: Edge computing means running your code on servers that are physically close to users around the world. This reduces latency and makes applications feel faster.
+<u>__Edge Computing__</u>: Edge computing means running your code on servers that are physically close to users around the world. This reduces latency and makes applications feel faster.
 
 -------------------------------------------------------------------------------------------
 ### Quick Comparison Table
