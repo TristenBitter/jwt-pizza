@@ -6,7 +6,7 @@ Serverless runtimes have become one of the most important shifts in modern backe
 
 -------------------------------------------------------------------------------------------
 ### Definitions
-<u>__Cold Start__</u>:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
+**<u>Cold Start</u>**:  A cold start is when a serverless function has to “wake up” before it can respond. This happens when the platform needs to start a new instance of your code, which adds a small delay to the first request.
 
 <u>__V8 Isolates__</u>:  V8 isolates are lightweight, sandboxed environments used by Cloudflare Workers and Deno Deploy to run JavaScript. They start almost instantly, which is why these platforms have very fast cold start times.
 
