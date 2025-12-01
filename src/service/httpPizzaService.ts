@@ -24,7 +24,7 @@ const env: EnvVars =
     : {};
 
 const pizzaServiceUrl =
-  env.VITE_PIZZA_SERVICE_URL ?? "https://pizza.bamboogarden.click";
+  env.VITE_PIZZA_SERVICE_URL ?? "https://pizza-service.bamboogarden.click";
 const pizzaFactoryUrl =
   env.VITE_PIZZA_FACTORY_URL ?? "https://pizza-factory.cs329.click";
 
