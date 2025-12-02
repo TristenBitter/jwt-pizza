@@ -9,7 +9,7 @@
 During the scheduled chaos testing window, the JWT Pizza Service experienced a sudden traffic spike with authentication attempts reaching 5000/sec and total HTTP requests reaching 35,000/sec. The service remained operational throughout the incident with only moderate latency increases. As a precautionary measure, the ECS service was restarted to ensure system stability.
 
 ## Timeline (MST)
-      (- **9:32 AM**: Initial false alert fired from Grafana monitoring system)
+
 - **10:30 AM**: Alert triggered email notification, reviewed logs and grafana dashboard
 - **10:40 AM**: Massive traffic spike began
   - Authentication attempts: ~5000/sec (baseline: <10/sec)
@@ -19,6 +19,8 @@ During the scheduled chaos testing window, the JWT Pizza Service experienced a s
 - **10:45 AM**: Performed ECS service restart via "Force new deployment" as precautionary measure
 - **10:50 AM**: Traffic returned to normal levels, new task fully operational
 - **10:55 AM**: All metrics returned to baseline
+
+As a note: (- **9:32 AM**: Initial alert fired from Grafana monitoring system however I watched as this resolved its self, seemed to be a no data FALSE ALARM )
 
 ## Root Cause
 Chaos testing initiated via pizza-factory.cs329.click triggered a DDoS-style traffic flood to test service resilience under extreme load conditions.
